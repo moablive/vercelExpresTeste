@@ -34,15 +34,22 @@ class AtendimentoService {
 
     criar(novoAtendimento: Atendimento): Promise<any> {
         if (!novoAtendimento || typeof novoAtendimento.data !== 'string' || 
+            typeof novoAtendimento.hora !== 'string' ||
             typeof novoAtendimento.servico !== 'string' || 
             typeof novoAtendimento.cliente !== 'string' || 
             typeof novoAtendimento.status !== 'string') {
             return Promise.reject(new Error('Dados incompletos ou inválidos para criar um novo atendimento'));
         }
+
+        //formato YYYY-MM-DD e hora para HH:MM:SS
+        const dataFormatada = new Date(novoAtendimento.data).toISOString().split('T')[0];
+        //formato HH:MM:SS
+        const horaFormatada = novoAtendimento.hora; 
     
-        const sql = `INSERT INTO atendimentos (data, servico, cliente, status) VALUES (?, ?, ?, ?)`;
+        const sql = `INSERT INTO atendimentos (data, hora, servico, cliente, status) VALUES (?, ?, ?, ?, ?)`;
         const valores = [
-            novoAtendimento.data,
+            dataFormatada,
+            horaFormatada,
             novoAtendimento.servico,
             novoAtendimento.cliente,
             novoAtendimento.status
@@ -62,11 +69,19 @@ class AtendimentoService {
 
     atualizar(id: number, dadosAtualizados: Partial<Atendimento>): Promise<any> {
         if (dadosAtualizados.data) {
-            const data = new Date(dadosAtualizados.data);
-            dadosAtualizados.data = data.toISOString().split('T')[0]; // Converte para 'YYYY-MM-DD'
+
+            //formato YYYY-MM-DD e hora para HH:MM:SS
+            const dataFormatada = new Date(dadosAtualizados.data).toISOString().split('T')[0];
+            dadosAtualizados.data = dataFormatada;
+        }
+        if (dadosAtualizados.hora) {
+            // Supondo que a hora já esteja no formato HH:MM:SS
+            const horaFormatada = dadosAtualizados.hora;
+            dadosAtualizados.hora = horaFormatada;
         }
     
         const sql = `UPDATE atendimentos SET ? WHERE id = ?`;
+        console.log("Dados atualizados enviados para o banco:", dadosAtualizados);
         return new Promise((resolve, reject) => {
             conexao.query(sql, [dadosAtualizados, id], (error, resposta) => {
                 if (error) {
