@@ -4,15 +4,24 @@
   "description": "Projeto de atendimento com Express e MySQL",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Guilherme Bonato",
   "license": "ISC",
   "dependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.2.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/mysql": "^2.15.26"
   }
 }
