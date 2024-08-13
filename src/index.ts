@@ -23,7 +23,7 @@ conexao.connect((err) => {
 });
 
 // Configura as rotas da aplicação
-router(app);
+router(app);  // As rotas de usuários e atendimentos são configuradas aqui
 
 // Inicia o servidor na porta especificada
 app.listen(port, () => {

@@ -7,7 +7,7 @@ class AtendimentoService {
         return new Promise<Atendimento[]>((resolve, reject) => {
             conexao.query(sql, (error, resposta: Atendimento[]) => {
                 if (error) {
-                    console.log("DEU ERRO NO buscar", error);
+                    console.error("Erro ao buscar atendimentos:", error);
                     reject(error);
                     return;
                 }
@@ -17,11 +17,11 @@ class AtendimentoService {
     }
 
     buscarPorId(id: number): Promise<Atendimento> {
-        return new Promise((resolve, reject) => {
-            const sql = 'SELECT * FROM atendimentos WHERE id = ?';
-            conexao.query(sql, [id], (error, results) => {
+        const sql = 'SELECT * FROM atendimentos WHERE id = ?';
+        return new Promise<Atendimento>((resolve, reject) => {
+            conexao.query(sql, [id], (error, results: Atendimento[]) => {
                 if (error) {
-                    console.log(`Erro ao buscar o atendimento com ID ${id}:`, error);
+                    console.error(`Erro ao buscar o atendimento com ID ${id}:`, error);
                     reject(new Error(`Erro ao buscar o atendimento com ID ${id}: ${error.message}`));
                 } else if (results.length === 0) {
                     reject(new Error(`Atendimento com ID ${id} não encontrado`));
@@ -33,18 +33,13 @@ class AtendimentoService {
     }
 
     criar(novoAtendimento: Atendimento): Promise<any> {
-        if (!novoAtendimento || typeof novoAtendimento.data !== 'string' || 
-            typeof novoAtendimento.hora !== 'string' ||
-            typeof novoAtendimento.servico !== 'string' || 
-            typeof novoAtendimento.cliente !== 'string' || 
-            typeof novoAtendimento.status !== 'string') {
+        if (!novoAtendimento || !novoAtendimento.data || !novoAtendimento.hora || 
+            !novoAtendimento.servico || !novoAtendimento.cliente || !novoAtendimento.status) {
             return Promise.reject(new Error('Dados incompletos ou inválidos para criar um novo atendimento'));
         }
 
-        //formato YYYY-MM-DD e hora para HH:MM:SS
         const dataFormatada = new Date(novoAtendimento.data).toISOString().split('T')[0];
-        //formato HH:MM:SS
-        const horaFormatada = novoAtendimento.hora; 
+        const horaFormatada = novoAtendimento.hora; // Hora já deve estar no formato correto (HH:MM:SS)
     
         const sql = `INSERT INTO atendimentos (data, hora, servico, cliente, status) VALUES (?, ?, ?, ?, ?)`;
         const valores = [
@@ -58,7 +53,7 @@ class AtendimentoService {
         return new Promise((resolve, reject) => {
             conexao.query(sql, valores, (error, resposta) => {
                 if (error) {
-                    console.log("DEU ERRO NO criar", error);
+                    console.error("Erro ao criar atendimento:", error);
                     reject(error);
                     return;
                 }
@@ -69,15 +64,11 @@ class AtendimentoService {
 
     atualizar(id: number, dadosAtualizados: Partial<Atendimento>): Promise<any> {
         if (dadosAtualizados.data) {
-
-            //formato YYYY-MM-DD e hora para HH:MM:SS
-            const dataFormatada = new Date(dadosAtualizados.data).toISOString().split('T')[0];
-            dadosAtualizados.data = dataFormatada;
+            dadosAtualizados.data = new Date(dadosAtualizados.data).toISOString().split('T')[0];
         }
         if (dadosAtualizados.hora) {
-            // Supondo que a hora já esteja no formato HH:MM:SS
-            const horaFormatada = dadosAtualizados.hora;
-            dadosAtualizados.hora = horaFormatada;
+            // Hora já deve estar no formato HH:MM:SS
+            dadosAtualizados.hora = dadosAtualizados.hora;
         }
     
         const sql = `UPDATE atendimentos SET ? WHERE id = ?`;
@@ -85,7 +76,7 @@ class AtendimentoService {
         return new Promise((resolve, reject) => {
             conexao.query(sql, [dadosAtualizados, id], (error, resposta) => {
                 if (error) {
-                    console.log("DEU ERRO NO atualizar", error);
+                    console.error("Erro ao atualizar atendimento:", error);
                     reject(error);
                     return;
                 }
@@ -99,7 +90,7 @@ class AtendimentoService {
         return new Promise((resolve, reject) => {
             conexao.query(sql, [id], (error, resposta) => {
                 if (error) {
-                    console.log("DEU ERRO NO deletar", error);
+                    console.error("Erro ao deletar atendimento:", error);
                     reject(error);
                     return;
                 }

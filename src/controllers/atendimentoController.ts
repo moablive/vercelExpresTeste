@@ -2,19 +2,19 @@ import atendimentoService from '../services/AtendimentoService';
 import { Atendimento } from '../interface/Atendimento';
 
 class AtendimentoController {
-    buscar() {
+    async buscar(): Promise<Atendimento[]> {
         return atendimentoService.buscar();
     }
 
-    criar(novoAtendimento: Atendimento) {
+    async criar(novoAtendimento: Atendimento): Promise<Atendimento> {
         return atendimentoService.criar(novoAtendimento);
     }
 
-    atualizar(id: number, dadosAtualizados: Partial<Atendimento>) {
+    async atualizar(id: number, dadosAtualizados: Partial<Atendimento>): Promise<Atendimento> {
         return atendimentoService.atualizar(id, dadosAtualizados);
     }
 
-    deletar(id: number) {
+    async deletar(id: number): Promise<void> {
         return atendimentoService.deletar(id);
     }
 }

@@ -1,9 +1,12 @@
 import { Router, Request, Response } from 'express';
+import { authenticateToken } from '../authMiddleware/authMiddleware';
 import atendimentoService from '../services/AtendimentoService';
+import { Atendimento } from '../interface/Atendimento';  // Certifique-se de ter uma interface para Atendimento
 
 const router = Router();
 
-router.get('/atendimentos', async (req: Request, res: Response) => {
+// Protegendo a rota com middleware de autenticação
+router.get('/atendimentos', authenticateToken, async (req: Request, res: Response) => {
     try {
         const atendimentos = await atendimentoService.buscar();
         res.status(200).json(atendimentos);
@@ -12,7 +15,7 @@ router.get('/atendimentos', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/atendimento/:id', async (req: Request, res: Response) => {
+router.get('/atendimento/:id', authenticateToken, async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
         const atendimento = await atendimentoService.buscarPorId(Number(id));
@@ -26,7 +29,7 @@ router.get('/atendimento/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.post('/atendimento', async (req: Request, res: Response) => {
+router.post('/atendimento', authenticateToken, async (req: Request<{}, {}, Atendimento>, res: Response) => {
     try {
         const novoAtendimento = req.body;
         const resposta = await atendimentoService.criar(novoAtendimento);
@@ -36,7 +39,7 @@ router.post('/atendimento', async (req: Request, res: Response) => {
     }
 });
 
-router.put('/atendimento/:id', async (req: Request, res: Response) => {
+router.put('/atendimento/:id', authenticateToken, async (req: Request<{ id: string }, {}, Atendimento>, res: Response) => {
     try {
         const { id } = req.params;
         const dadosAtualizados = req.body;
@@ -47,7 +50,7 @@ router.put('/atendimento/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.delete('/atendimento/:id', async (req: Request, res: Response) => {
+router.delete('/atendimento/:id', authenticateToken, async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const resposta = await atendimentoService.deletar(Number(id));
