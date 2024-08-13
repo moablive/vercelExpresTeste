@@ -16,6 +16,22 @@ class AtendimentoService {
         });
     }
 
+    buscarPorId(id: number): Promise<Atendimento> {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM atendimentos WHERE id = ?';
+            conexao.query(sql, [id], (error, results) => {
+                if (error) {
+                    console.log(`Erro ao buscar o atendimento com ID ${id}:`, error);
+                    reject(new Error(`Erro ao buscar o atendimento com ID ${id}: ${error.message}`));
+                } else if (results.length === 0) {
+                    reject(new Error(`Atendimento com ID ${id} não encontrado`));
+                } else {
+                    resolve(results[0]);
+                }
+            });
+        });
+    }
+
     criar(novoAtendimento: Atendimento): Promise<any> {
         if (!novoAtendimento || typeof novoAtendimento.data !== 'string' || 
             typeof novoAtendimento.servico !== 'string' || 

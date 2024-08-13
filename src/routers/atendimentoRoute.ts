@@ -12,6 +12,20 @@ router.get('/atendimentos', async (req: Request, res: Response) => {
     }
 });
 
+router.get('/atendimento/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const atendimento = await atendimentoService.buscarPorId(Number(id));
+        res.status(200).json(atendimento);
+    } catch (error: any) {
+        if (error.message.includes('não encontrado')) {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(400).json({ error: error.message });
+        }
+    }
+});
+
 router.post('/atendimentos', async (req: Request, res: Response) => {
     try {
         const novoAtendimento = req.body;
