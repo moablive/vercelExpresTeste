@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Middleware para permitir CORS apenas para o seu front-end
 app.use(cors({
-    origin: 'https://vercel-vue-teste-iboiwtoee-teammoab.vercel.app/'
+    origin: 'http://localhost:5173'
 }));
 
 // Verifica a conexão com o banco de dados
