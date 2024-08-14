@@ -1,10 +1,11 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import router from './routers/router';
 import conexao from './db/conexao';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 // Middleware para permitir que o Express interprete JSON no corpo das requisições
 app.use(express.json());

@@ -29,6 +29,19 @@ class UserService {
         });
     }
 
+    // Buscar todos os usuários
+    async buscarTodos(): Promise<Usuario[]> {
+        const sql = 'SELECT * FROM usuarios';
+        return new Promise((resolve, reject) => {
+            conexao.query(sql, (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(results);
+            });
+        });
+    }
+
     // Buscar um usuário por ID
     async buscarPorId(id: number): Promise<Usuario | null> {
         const sql = 'SELECT * FROM usuarios WHERE id = ?';

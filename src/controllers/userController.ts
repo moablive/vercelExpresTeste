@@ -60,3 +60,77 @@ export const loginUser = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Erro no login', error: errorMessage });
     }
 };
+
+// Buscar todos os usuários
+export const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        const usuarios = await UserService.buscarTodos();
+
+        // Excluir a senha dos usuários antes de enviar a resposta
+        const usuariosSemSenha = usuarios.map((usuario) => {
+            const { password, ...userWithoutPassword } = usuario;
+            return userWithoutPassword;
+        });
+
+        res.json(usuariosSemSenha);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar usuários', error });
+    }
+};
+
+//BUSCA USUARIO POR ID
+export const getUserById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const usuario = await UserService.buscarPorId(Number(id));
+
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        // Retornar o usuário encontrado, excluindo a senha por segurança
+        const { password, ...userWithoutPassword } = usuario;
+        res.json(userWithoutPassword);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar usuário', error });
+    }
+};
+
+// Atualizar dados de um usuário
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const dadosAtualizados: Partial<Usuario> = req.body;
+
+        // Verifica se o usuário existe
+        const usuarioExistente = await UserService.buscarPorId(Number(id));
+        if (!usuarioExistente) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        // Atualiza os dados do usuário
+        await UserService.atualizar(Number(id), dadosAtualizados);
+        res.status(200).json({ message: 'Usuário atualizado com sucesso' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao atualizar usuário', error });
+    }
+};
+
+// Deletar um usuário por ID
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        // Verifica se o usuário existe
+        const usuarioExistente = await UserService.buscarPorId(Number(id));
+        if (!usuarioExistente) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        // Deleta o usuário
+        await UserService.deletar(Number(id));
+        res.status(200).json({ message: 'Usuário deletado com sucesso' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao deletar usuário', error });
+    }
+};
